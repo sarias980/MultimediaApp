@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public LatLng position;
     FirebaseFirestore db;
     private int i = 0;
+    private HashMap<Integer, Point> points = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
 
         downLoadPoints();
 
@@ -125,13 +128,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawPoints(String foto, double lat, double lon) {
         i++;
+
         Point point = new Point(foto, lat,  lon);
+        points.put(i,point);
+
         LatLng latLng = new LatLng(point.getLat(),point.getLon());
         mMap.addMarker(new MarkerOptions().position(latLng).title(String.valueOf(i))) ;
         mMap.setOnMarkerClickListener((Marker marker) -> {
-            Log.d("AAA", marker.getTitle());
+            //Log.d("Anda", marker.getTitle());
+            //Log.d("Anda", points.toString());
+            Point geoPoint = points.get(Integer.valueOf(marker.getTitle()));
             Intent intent = new Intent(getApplicationContext(), PointMainActivity.class);
-            intent.putExtra("point", foto);
+            //Log.d("Anda1", geoPoint.toString());
+            intent.putExtra("point", geoPoint.getFoto());
             startActivity(intent);
             return false;
         });
